@@ -19,7 +19,7 @@ from pptx.util import Inches, Pt
 # Output path inside the package so it ships as package data
 OUTPUT = Path(__file__).parent.parent / "md_slides" / "template.pptx"
 
-# ── Colour palette ────────────────────────────────────────────────────────────
+# ── Color palette ─────────────────────────────────────────────────────────────
 DARK_BLUE = RGBColor(0x1F, 0x49, 0x7D)  # title-slide background
 ACCENT_BLUE = RGBColor(0x27, 0x6F, 0xBF)  # title-slide subtitle / accents
 WHITE = RGBColor(0xFF, 0xFF, 0xFF)
@@ -28,7 +28,7 @@ LIGHT_GREY = RGBColor(0xF2, 0xF2, 0xF2)  # content-slide background
 
 
 def _set_fill_solid(fill_element, rgb: RGBColor):
-    """Set a solid colour fill on an XML fill element."""
+    """Set a solid color fill on an XML fill element."""
     # Remove any existing fill children
     for child in list(fill_element):
         fill_element.remove(child)
@@ -39,15 +39,15 @@ def _set_fill_solid(fill_element, rgb: RGBColor):
 
 
 def _set_layout_background(layout, rgb: RGBColor):
-    """Set the background colour of a slide layout."""
+    """Set the background color of a slide layout."""
     bg = layout.background
     fill = bg.fill
     fill.solid()
     fill.fore_color.rgb = rgb
 
 
-def _set_text_colour(text_frame, rgb: RGBColor, font_size_pt: int = None):
-    """Set colour (and optionally size) for all runs in a text frame."""
+def _set_text_color(text_frame, rgb: RGBColor, font_size_pt: int = None):
+    """Set color (and optionally size) for all runs in a text frame."""
     for paragraph in text_frame.paragraphs:
         for run in paragraph.runs:
             run.font.color.rgb = rgb
