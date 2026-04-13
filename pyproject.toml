@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "md-slides"
+version = "0.1.0"
+description = "Convert Markdown files into PowerPoint presentations."
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.9"
+dependencies = [
+    "python-pptx>=1.0",
+    "lxml>=4.9",
+]
+
+[project.scripts]
+md-slides = "md_slides.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["md_slides*"]
+
+[tool.setuptools.package-data]
+md_slides = ["template.pptx"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.black]
+line-length = 88
+target-version = ["py39"]
