@@ -25,3 +25,7 @@ output.pptx
 # OS
 .DS_Store
 Thumbs.db
+
+# PPTX files
+*.pptx
+templates/

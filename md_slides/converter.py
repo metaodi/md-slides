@@ -54,8 +54,12 @@ def convert(slides, output_path, template_path=None):
             _add_title_slide(prs, slide_data)
         else:
             _add_content_slide(prs, slide_data)
+    
+    if not output_path.endswith(".pptx"):
+        output_path = f"{output_path}.pptx"
 
     prs.save(output_path)
+    return output_path
 
 
 def _add_title_slide(prs, slide_data):
@@ -117,9 +121,7 @@ def _fill_body(text_frame, elements):
             para = text_frame.add_paragraph()
 
         if elem["type"] == "bullet":
-            para.level = 0
-        else:
-            para.level = 0
+            para.level = elem["level"] 
 
         _apply_runs(para, elem.get("runs", []))
 
@@ -150,7 +152,5 @@ def _get_placeholder(slide, idx):
     Returns:
         Placeholder shape or None.
     """
-    for ph in slide.placeholders:
-        if ph.placeholder_format.idx == idx:
-            return ph
-    return None
+    placeholders = list(slide.placeholders)
+    return placeholders[idx] if idx < len(placeholders) else None

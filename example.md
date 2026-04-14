@@ -36,6 +36,7 @@ You can bring your own branded template:
 - Create a `.pptx` file with your employer's design
 - Use `--template your_brand.pptx` when running the tool
 - The tool merges your content into the template automatically
+    * and even supports level 2 bullets
 
 ---
 

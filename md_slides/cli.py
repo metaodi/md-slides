@@ -52,12 +52,12 @@ def main():
 
     # Convert to PPTX
     try:
-        convert(slides, args.output, template_path=args.template)
+        output_path = convert(slides, args.output, template_path=args.template)
     except Exception as exc:  # noqa: BLE001
         print(f"Error generating presentation: {exc}", file=sys.stderr)
         sys.exit(1)
 
-    print(f"Presentation saved to '{args.output}'.")
+    print(f"Presentation saved to '{output_path}'.")
 
 
 if __name__ == "__main__":
