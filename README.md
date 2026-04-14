@@ -24,15 +24,10 @@ your_slides.md  +  template.pptx  →  md-slides  →  output.pptx
 ## Installation
 
 ```bash
-pip install md-slides
-```
-
-Or install from source:
-
-```bash
 git clone https://github.com/metaodi/md-slides.git
 cd md-slides
-pip install .
+uv sync
+uv pip install -e .
 ```
 
 ---
