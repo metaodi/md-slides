@@ -102,6 +102,17 @@ def _parse_body(lines):
                     "type": "bullet",
                     "text": text,
                     "runs": parse_inline(text),
+                    "level": 1,
+                }
+            )
+        elif re.match(r"^\s+[-*]\s+", line):
+            text = re.sub(r"^\s+[-*]\s+", "", line)
+            elements.append(
+                {
+                    "type": "bullet",
+                    "text": text,
+                    "runs": parse_inline(text),
+                    "level": 2,
                 }
             )
         else:
