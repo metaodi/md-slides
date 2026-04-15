@@ -136,7 +136,7 @@ The output is written to `md_slides/template.pptx`.
 md-slides is also available as a web application powered by GitHub Pages and
 GitHub Actions.
 
-**Live site:** <https://metaodi.github.io/md-slides/>
+**Live site:** <https://metaodi.ch/md-slides/>
 
 ### How it works
 
