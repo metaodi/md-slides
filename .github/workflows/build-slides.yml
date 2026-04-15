@@ -58,7 +58,7 @@ jobs:
             OUTPUT_NAME="slides"
           fi
 
-          md-slides input.md \
+          uv run md-slides input.md \
             -o "${OUTPUT_NAME}.pptx" \
             --template "templates/${{ inputs.template_name }}"
 
