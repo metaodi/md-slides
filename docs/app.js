@@ -148,7 +148,14 @@
       return;
     }
 
-    var encoded = btoa(unescape(encodeURIComponent(markdown)));
+    var encoded = btoa(
+      encodeURIComponent(markdown).replace(
+        /%([0-9A-F]{2})/g,
+        function (_, p1) {
+          return String.fromCharCode(parseInt(p1, 16));
+        }
+      )
+    );
 
     generateBtn.disabled = true;
     showStatus("queued", "Triggering workflow…");
