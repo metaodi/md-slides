@@ -1,0 +1,69 @@
+name: Build Slides
+
+on:
+  workflow_dispatch:
+    inputs:
+      markdown_content:
+        description: "Base64-encoded Markdown content"
+        required: true
+        type: string
+      template_name:
+        description: "Template filename from templates/ directory"
+        required: true
+        type: string
+        default: "default.pptx"
+      output_filename:
+        description: "Desired output filename (without extension)"
+        required: false
+        type: string
+        default: "slides"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+
+      - name: Install dependencies
+        run: |
+          uv sync
+          uv pip install -e .
+
+      - name: Validate template
+        run: |
+          TEMPLATE="templates/${{ inputs.template_name }}"
+          if [ ! -f "$TEMPLATE" ]; then
+            echo "Error: template '${{ inputs.template_name }}' not found in templates/"
+            exit 1
+          fi
+
+      - name: Decode markdown and build presentation
+        run: |
+          echo "${{ inputs.markdown_content }}" | base64 --decode > input.md
+
+          OUTPUT_NAME="${{ inputs.output_filename }}"
+          if [ -z "$OUTPUT_NAME" ]; then
+            OUTPUT_NAME="slides"
+          fi
+
+          md-slides input.md \
+            -o "${OUTPUT_NAME}.pptx" \
+            --template "templates/${{ inputs.template_name }}"
+
+          echo "output_file=${OUTPUT_NAME}.pptx" >> "$GITHUB_ENV"
+
+      - name: Upload presentation artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: presentation
+          path: ${{ env.output_file }}
+          retention-days: 7

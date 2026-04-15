@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>md-slides — Markdown to PowerPoint</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>md-slides</h1>
+    <p class="subtitle">Convert Markdown into PowerPoint presentations</p>
+  </header>
+
+  <main>
+    <!-- GitHub Token -->
+    <section class="config-section">
+      <details id="token-details">
+        <summary>GitHub Token</summary>
+        <p class="help-text">
+          A <a href="https://github.com/settings/tokens/new?scopes=repo" target="_blank" rel="noopener">
+          Personal Access Token</a> with <code>actions:write</code> and <code>actions:read</code>
+          scopes is required. The token is stored in your browser only and sent directly to
+          <code>api.github.com</code>.
+        </p>
+        <div class="input-group">
+          <label for="github-token">Token</label>
+          <input type="password" id="github-token" placeholder="ghp_..." autocomplete="off">
+          <button id="save-token-btn" type="button">Save</button>
+        </div>
+      </details>
+    </section>
+
+    <!-- Repository config (hidden by default, auto-detected) -->
+    <section class="config-section">
+      <details id="repo-details">
+        <summary>Repository</summary>
+        <p class="help-text">
+          Owner and repository name for the md-slides instance.
+        </p>
+        <div class="input-row">
+          <div class="input-group">
+            <label for="repo-owner">Owner</label>
+            <input type="text" id="repo-owner" value="metaodi">
+          </div>
+          <div class="input-group">
+            <label for="repo-name">Repository</label>
+            <input type="text" id="repo-name" value="md-slides">
+          </div>
+        </div>
+      </details>
+    </section>
+
+    <!-- Template selection -->
+    <section class="template-section">
+      <h2>Template</h2>
+      <div id="template-picker" class="template-picker">
+        <p class="loading">Loading templates…</p>
+      </div>
+    </section>
+
+    <!-- Markdown editor -->
+    <section class="editor-section">
+      <h2>Markdown</h2>
+      <p class="help-text">
+        Use <code># Title</code> for title slides and <code>## Heading</code> for
+        content slides. Separate slides with <code>---</code>.
+      </p>
+      <textarea id="markdown-editor" spellcheck="false" placeholder="# My Presentation
+
+Write your subtitle here
+
+---
+
+## First Slide
+
+- Bullet point one
+- **Bold** text
+- *Italic* text
+
+---
+
+## Second Slide
+
+Some paragraph text here."></textarea>
+    </section>
+
+    <!-- Actions -->
+    <section class="actions-section">
+      <div class="output-group">
+        <label for="output-filename">Filename</label>
+        <input type="text" id="output-filename" value="slides" placeholder="slides">
+        <span class="extension">.pptx</span>
+      </div>
+      <button id="generate-btn" type="button">Generate Slides</button>
+    </section>
+
+    <!-- Status -->
+    <section id="status-section" class="status-section hidden">
+      <h2>Status</h2>
+      <div id="status-content">
+        <div class="status-indicator">
+          <span id="status-icon" class="status-icon"></span>
+          <span id="status-text">Waiting…</span>
+        </div>
+        <div id="status-actions" class="hidden">
+          <a id="download-link" class="download-btn hidden" href="#" download>Download Presentation</a>
+          <a id="run-link" class="run-link hidden" href="#" target="_blank" rel="noopener">View workflow run</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>
+      <a href="https://github.com/metaodi/md-slides" target="_blank" rel="noopener">md-slides</a>
+      — MIT License
+    </p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
