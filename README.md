@@ -131,6 +131,56 @@ The output is written to `md_slides/template.pptx`.
 
 ---
 
+## Web Application
+
+md-slides is also available as a web application powered by GitHub Pages and
+GitHub Actions.
+
+**Live site:** <https://metaodi.github.io/md-slides/>
+
+### How it works
+
+1. Open the web app in your browser.
+2. Enter a **GitHub Personal Access Token** (PAT) with `actions:write` and
+   `actions:read` scopes. The token is stored only in your browser's session
+   storage and sent directly to `api.github.com`.
+3. Choose a **template** from the available options.
+4. Write or paste your **Markdown** content in the editor.
+5. Click **Generate Slides** — a GitHub Actions workflow runs the conversion
+   and uploads the resulting `.pptx` as an artifact.
+6. Once the workflow completes, download the presentation directly from the
+   page.
+
+### Creating a PAT
+
+1. Go to <https://github.com/settings/tokens/new?scopes=repo>.
+2. Give the token a descriptive name (e.g. "md-slides web").
+3. Select the **repo** scope (which includes `actions:read` and
+   `actions:write`).
+4. Click **Generate token** and copy it into the web app.
+
+### Adding custom templates
+
+Place `.pptx` template files in the `templates/` directory and update
+`templates/templates.json` with the new entry:
+
+```json
+[
+  {
+    "name": "Default",
+    "description": "Clean, professional default template.",
+    "file": "default.pptx"
+  },
+  {
+    "name": "Corporate",
+    "description": "Your company branded template.",
+    "file": "corporate.pptx"
+  }
+]
+```
+
+---
+
 ## Development
 
 ### Set up the environment
@@ -161,14 +211,24 @@ black md_slides tests scripts
 
 ```
 md-slides/
+├── .github/
+│   └── workflows/
+│       └── build-slides.yml  # GitHub Actions backend
+├── docs/
+│   ├── index.html            # web app page
+│   ├── style.css             # web app styling
+│   └── app.js                # web app logic
 ├── md_slides/
-│   ├── __init__.py       # package version
-│   ├── cli.py            # CLI entry point
-│   ├── parser.py         # Markdown → slide dicts
-│   ├── converter.py      # slide dicts → .pptx
-│   └── template.pptx     # bundled default template
+│   ├── __init__.py            # package version
+│   ├── cli.py                 # CLI entry point
+│   ├── parser.py              # Markdown → slide dicts
+│   ├── converter.py           # slide dicts → .pptx
+│   └── template.pptx          # bundled default template
 ├── scripts/
-│   └── create_template.py  # regenerate template.pptx
+│   └── create_template.py     # regenerate template.pptx
+├── templates/
+│   ├── templates.json         # template manifest for web app
+│   └── default.pptx           # default template
 ├── tests/
 │   ├── test_parser.py
 │   └── test_converter.py
