@@ -28,4 +28,5 @@ Thumbs.db
 
 # PPTX files
 *.pptx
-templates/
+!md_slides/template.pptx
+!templates/*.pptx
