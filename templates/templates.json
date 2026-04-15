@@ -3,5 +3,10 @@
     "name": "Default",
     "description": "Clean, professional default template bundled with md-slides.",
     "file": "default.pptx"
+  },
+  {
+    "name": "EBP",
+    "description": "EBP-style slide template.",
+    "file": "ebp_template.pptx"
   }
 ]
