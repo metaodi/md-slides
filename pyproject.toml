@@ -11,17 +11,19 @@ license = { file = "LICENSE" }
 requires-python = ">=3.9"
 dependencies = [
     "python-pptx>=1.0",
+    "python-docx>=1.1",
     "lxml>=4.9",
 ]
 
 [project.scripts]
 md-slides = "md_slides.cli:main"
+md-docs = "md_slides.doc_cli:main"
 
 [tool.setuptools.packages.find]
 include = ["md_slides*"]
 
 [tool.setuptools.package-data]
-md_slides = ["template.pptx"]
+md_slides = ["template.pptx", "template.docx"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

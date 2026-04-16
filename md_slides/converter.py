@@ -54,7 +54,7 @@ def convert(slides, output_path, template_path=None):
             _add_title_slide(prs, slide_data)
         else:
             _add_content_slide(prs, slide_data)
-    
+
     if not output_path.endswith(".pptx"):
         output_path = f"{output_path}.pptx"
 
@@ -121,7 +121,7 @@ def _fill_body(text_frame, elements):
             para = text_frame.add_paragraph()
 
         if elem["type"] == "bullet":
-            para.level = elem["level"] 
+            para.level = elem["level"]
 
         _apply_runs(para, elem.get("runs", []))
 

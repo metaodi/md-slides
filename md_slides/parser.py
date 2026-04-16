@@ -127,6 +127,68 @@ def _parse_body(lines):
     return elements
 
 
+def parse_markdown_doc(content):
+    """Parse markdown content into a list of document element dicts.
+
+    Unlike ``parse_markdown`` (which splits on ``---`` for slides), this
+    function treats the input as a continuous document.  Headings at any
+    level (``#``, ``##``, ``###``, …) produce heading elements, ``---``
+    inserts a page break, and everything else is parsed as body text
+    (paragraphs and bullet lists) using the shared ``_parse_body`` helper.
+
+    Args:
+        content: Raw markdown string.
+
+    Returns:
+        List of element dicts.  Each dict has at minimum a ``type`` key
+        (one of ``'heading'``, ``'page_break'``, ``'bullet'``, or
+        ``'paragraph'``).
+    """
+    # Normalize line endings
+    content = content.replace("\r\n", "\n").replace("\r", "\n")
+
+    elements = []
+    lines = content.split("\n")
+    body_buffer = []
+
+    def _flush_body():
+        """Parse and append any accumulated body lines."""
+        if body_buffer:
+            elements.extend(_parse_body(body_buffer))
+            body_buffer.clear()
+
+    for line in lines:
+        stripped = line.strip()
+
+        # Horizontal rule → page break
+        if re.match(r"^---+\s*$", stripped):
+            _flush_body()
+            elements.append({"type": "page_break"})
+            continue
+
+        # Heading (any level)
+        m = re.match(r"^(#{1,6})\s+(.*)", line)
+        if m:
+            _flush_body()
+            level = len(m.group(1))
+            title = m.group(2).strip()
+            elements.append(
+                {
+                    "type": "heading",
+                    "level": level,
+                    "text": title,
+                    "runs": parse_inline(title),
+                }
+            )
+            continue
+
+        # Everything else → collect for body parsing
+        body_buffer.append(line)
+
+    _flush_body()
+    return elements
+
+
 def parse_inline(text):
     """Parse inline formatting (bold, italic) into a list of run dicts.
 
