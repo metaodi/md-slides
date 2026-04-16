@@ -1,10 +1,15 @@
 # md-slides
 
-> Convert Markdown files into PowerPoint presentations from the command line.
+> Convert Markdown files into PowerPoint presentations **or Word documents** from the command line.
 
 ```
 your_slides.md  +  template.pptx  →  md-slides  →  output.pptx
 (content)          (design)           (tool)        (final slides)
+```
+
+```
+your_doc.md  +  template.docx  →  md-docs  →  output.docx
+(content)       (design)          (tool)      (final document)
 ```
 
 ## Features
@@ -18,6 +23,12 @@ your_slides.md  +  template.pptx  →  md-slides  →  output.pptx
   - **Bold** (`**text**`) and *italic* (`*text*`) inline formatting
 - Bundled default template — clean, professional look out of the box
 - Swap in your own branded `.pptx` template with `--template`
+- **NEW:** `md-docs` command to convert Markdown into Word (`.docx`) documents
+  - Preserves your Word template's title page, table of contents, headers, and
+    footers
+  - Maps `#`–`######` headings to Word Heading 1–6 styles
+  - `---` inserts a page break instead of separating slides
+  - Supports bullet lists (including nested) and bold/italic formatting
 
 ---
 
@@ -59,6 +70,96 @@ md-slides example.md -o slides/my_presentation.pptx
 # Use a branded template
 md-slides example.md -o output.pptx --template corporate_template.pptx
 ```
+
+---
+
+## md-docs — Word Document Conversion
+
+`md-docs` converts Markdown into a Word (`.docx`) document.  It reuses your
+Word template's existing title page, table of contents, headers, and footers,
+and appends the converted Markdown content after the template's body.
+
+```bash
+md-docs input.md -o output.docx
+```
+
+### Arguments
+
+| Argument | Description | Default |
+|---|---|---|
+| `input` | Path to the Markdown file | *(required)* |
+| `-o` / `--output` | Output `.docx` file path | `output.docx` |
+| `--template` | Path to a custom `.docx` template | bundled template |
+| `--version` | Show version and exit | — |
+
+### Examples
+
+```bash
+# Basic conversion
+md-docs README.md
+
+# Custom output path
+md-docs doc.md -o report.docx
+
+# Use a branded template (preserves title page, TOC, headers, footers)
+md-docs doc.md -o output.docx --template corporate_template.docx
+```
+
+### Markdown format for documents
+
+Unlike `md-slides`, there is no slide concept.  `---` inserts a **page break**
+instead of separating slides, and headings at any level (`#` through `######`)
+map to the corresponding Word heading style.
+
+```markdown
+# Document Title
+
+Introduction paragraph with **bold** and *italic* text.
+
+## First Section
+
+- Bullet point one
+- Bullet point two
+    - Nested bullet
+
+---
+
+## Second Section (after a page break)
+
+Another paragraph here.
+```
+
+| Markdown | Word style |
+|---|---|
+| `# Heading` | Heading 1 |
+| `## Heading` | Heading 2 |
+| `### Heading` | Heading 3 |
+| `- item` or `* item` | List Bullet |
+| `    - item` | List Bullet 2 |
+| Plain text | Normal |
+| `---` | Page break |
+
+### Custom Word templates
+
+Supply your own branded `.docx` template with `--template`:
+
+```bash
+md-docs input.md --template my_brand.docx
+```
+
+The template's existing content (title page, TOC, headers, footers) is
+preserved.  New content from the Markdown file is appended after the
+template's body.  The table of contents will auto-update when you open the
+file in Word and press **Ctrl+A, F9** (or right-click the TOC and choose
+*Update Field*).
+
+### Regenerating the bundled Word template
+
+```bash
+python scripts/create_doc_template.py
+```
+
+The output is written to `md_slides/template.docx`.
 
 ---
 
@@ -220,18 +321,23 @@ md-slides/
 │   └── app.js                # web app logic
 ├── md_slides/
 │   ├── __init__.py            # package version
-│   ├── cli.py                 # CLI entry point
-│   ├── parser.py              # Markdown → slide dicts
+│   ├── cli.py                 # CLI entry point (md-slides)
+│   ├── doc_cli.py             # CLI entry point (md-docs)
+│   ├── parser.py              # Markdown → slide/doc dicts
 │   ├── converter.py           # slide dicts → .pptx
-│   └── template.pptx          # bundled default template
+│   ├── doc_converter.py       # doc element dicts → .docx
+│   ├── template.pptx          # bundled default PPTX template
+│   └── template.docx          # bundled default DOCX template
 ├── scripts/
-│   └── create_template.py     # regenerate template.pptx
+│   ├── create_template.py     # regenerate template.pptx
+│   └── create_doc_template.py # regenerate template.docx
 ├── templates/
 │   ├── templates.json         # template manifest for web app
 │   └── default.pptx           # default template
 ├── tests/
 │   ├── test_parser.py
-│   └── test_converter.py
+│   ├── test_converter.py
+│   └── test_doc_converter.py
 ├── example.md
 ├── pyproject.toml
 ├── requirements.txt
