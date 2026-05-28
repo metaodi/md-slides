@@ -113,9 +113,8 @@ def _add_table(doc, elem):
 
     for row in rows:
         cells = table.add_row().cells
-        for idx, value in enumerate(row):
-            if idx < len(cells):
-                cells[idx].text = value
+        for idx, cell in enumerate(cells):
+            cell.text = row[idx] if idx < len(row) else ""
 
 
 def _add_paragraph(doc, elem):

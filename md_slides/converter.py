@@ -128,17 +128,7 @@ def _fill_body(text_frame, elements):
             para.level = elem["level"]
             _apply_runs(para, elem.get("runs", []))
         elif elem["type"] == "table":
-            _apply_runs(
-                para,
-                [{"text": _table_header_text(elem), "bold": True, "italic": False}],
-            )
-            for row in elem.get("rows", []):
-                row_para = text_frame.add_paragraph()
-                _apply_runs(
-                    row_para,
-                    [{"text": " | ".join(row), "bold": False, "italic": False}],
-                )
-            continue
+            _add_table_as_text(text_frame, para, elem)
         else:
             _apply_runs(para, elem.get("runs", []))
 
@@ -151,6 +141,20 @@ def _has_only_table(elements):
 def _table_header_text(table):
     """Render table header cells as plain text."""
     return " | ".join(table.get("headers", []))
+
+
+def _add_table_as_text(text_frame, first_para, table):
+    """Fallback table rendering when mixed with non-table content."""
+    _apply_runs(
+        first_para,
+        [{"text": _table_header_text(table), "bold": True, "italic": False}],
+    )
+    for row in table.get("rows", []):
+        row_para = text_frame.add_paragraph()
+        _apply_runs(
+            row_para,
+            [{"text": " | ".join(row), "bold": False, "italic": False}],
+        )
 
 
 def _add_table(slide, anchor_shape, table):
@@ -176,9 +180,8 @@ def _add_table(slide, anchor_shape, table):
         ppt_table.cell(0, col_idx).text = header
 
     for row_idx, row in enumerate(rows, start=1):
-        for col_idx in range(col_count):
-            value = row[col_idx] if col_idx < len(row) else ""
-            ppt_table.cell(row_idx, col_idx).text = value
+        for col_idx, cell in enumerate(ppt_table.rows[row_idx].cells):
+            cell.text = row[col_idx] if col_idx < len(row) else ""
 
 
 def _apply_runs(paragraph, runs):

@@ -6,6 +6,9 @@ a type ('title' or 'content') and relevant fields for the PPTX converter.
 
 import re
 
+MIN_TABLE_DIVIDER_DASHES = 3
+TABLE_DIVIDER_CELL_PATTERN = re.compile(rf"^:?-{{{MIN_TABLE_DIVIDER_DASHES},}}:?$")
+
 
 def parse_markdown(content):
     """Parse markdown content into a list of slide dicts.
@@ -164,7 +167,7 @@ def _is_table_divider(line):
     if not _is_table_row(line):
         return False
     cells = _parse_table_row(line)
-    return bool(cells) and all(re.match(r"^:?-{3,}:?$", cell) for cell in cells)
+    return bool(cells) and all(TABLE_DIVIDER_CELL_PATTERN.match(cell) for cell in cells)
 
 
 def _parse_table_row(line):
