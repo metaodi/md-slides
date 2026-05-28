@@ -74,6 +74,16 @@ def test_parse_markdown_fallback_slide():
     assert slides[0]["title"] == ""
 
 
+def test_parse_markdown_table():
+    md = "## Table Slide\n| Month | Savings |\n| ----- | ------- |\n| January | $250 |"
+    slides = parse_markdown(md)
+    elements = slides[0]["elements"]
+    assert len(elements) == 1
+    assert elements[0]["type"] == "table"
+    assert elements[0]["headers"] == ["Month", "Savings"]
+    assert elements[0]["rows"] == [["January", "$250"]]
+
+
 # ── parse_inline ───────────────────────────────────────────────────────────────
 
 
@@ -200,6 +210,15 @@ def test_doc_mixed_content():
     assert "heading" in types
     assert "paragraph" in types
     assert "bullet" in types
+
+
+def test_doc_table():
+    md = "| Month | Savings |\n| ----- | ------- |\n| January | $250 |"
+    elements = parse_markdown_doc(md)
+    assert len(elements) == 1
+    assert elements[0]["type"] == "table"
+    assert elements[0]["headers"] == ["Month", "Savings"]
+    assert elements[0]["rows"] == [["January", "$250"]]
 
 
 def test_doc_empty_input():

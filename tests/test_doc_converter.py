@@ -104,6 +104,22 @@ def test_nested_bullet():
         os.unlink(out)
 
 
+def test_table():
+    out = _make_docx(
+        "| Month | Savings |\n| ----- | ------- |\n| January | $250 |\n| February | $80 |"
+    )
+    try:
+        doc = Document(out)
+        assert len(doc.tables) >= 1
+        table = doc.tables[0]
+        assert table.cell(0, 0).text == "Month"
+        assert table.cell(0, 1).text == "Savings"
+        assert table.cell(1, 0).text == "January"
+        assert table.cell(1, 1).text == "$250"
+    finally:
+        os.unlink(out)
+
+
 # ── Formatting ─────────────────────────────────────────────────────────────────
 
 

@@ -98,7 +98,11 @@ def _add_content_slide(prs, slide_data):
 
     body_ph = _get_placeholder(slide, 1)
     if body_ph is not None:
-        _fill_body(body_ph.text_frame, slide_data.get("elements", []))
+        elements = slide_data.get("elements", [])
+        if _has_only_table(elements):
+            _add_table(slide, body_ph, elements[0])
+        else:
+            _fill_body(body_ph.text_frame, elements)
 
 
 def _fill_body(text_frame, elements):
@@ -122,8 +126,62 @@ def _fill_body(text_frame, elements):
 
         if elem["type"] == "bullet":
             para.level = elem["level"]
+            _apply_runs(para, elem.get("runs", []))
+        elif elem["type"] == "table":
+            _add_table_as_text(text_frame, para, elem)
+        else:
+            _apply_runs(para, elem.get("runs", []))
 
-        _apply_runs(para, elem.get("runs", []))
+
+def _has_only_table(elements):
+    """Return True if *elements* contains exactly one table element."""
+    return len(elements) == 1 and elements[0].get("type") == "table"
+
+
+def _table_header_text(table):
+    """Render table header cells as plain text."""
+    return " | ".join(table.get("headers", []))
+
+
+def _add_table_as_text(text_frame, first_para, table):
+    """Fallback table rendering when mixed with non-table content."""
+    _apply_runs(
+        first_para,
+        [{"text": _table_header_text(table), "bold": True, "italic": False}],
+    )
+    for row in table.get("rows", []):
+        row_para = text_frame.add_paragraph()
+        _apply_runs(
+            row_para,
+            [{"text": " | ".join(row), "bold": False, "italic": False}],
+        )
+
+
+def _add_table(slide, anchor_shape, table):
+    """Add a PowerPoint table anchored to a body placeholder's geometry."""
+    headers = table.get("headers", [])
+    rows = table.get("rows", [])
+    if not headers:
+        return
+
+    col_count = len(headers)
+    row_count = len(rows) + 1
+    table_shape = slide.shapes.add_table(
+        row_count,
+        col_count,
+        anchor_shape.left,
+        anchor_shape.top,
+        anchor_shape.width,
+        anchor_shape.height,
+    )
+    ppt_table = table_shape.table
+
+    for col_idx, header in enumerate(headers):
+        ppt_table.cell(0, col_idx).text = header
+
+    for row_idx, row in enumerate(rows, start=1):
+        for col_idx, cell in enumerate(ppt_table.rows[row_idx].cells):
+            cell.text = row[col_idx] if col_idx < len(row) else ""
 
 
 def _apply_runs(paragraph, runs):
