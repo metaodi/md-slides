@@ -89,9 +89,34 @@ def _parse_body(lines):
         List of element dicts with 'type', 'text', and 'runs'.
     """
     elements = []
-    for line in lines:
-        line = line.rstrip()
+    idx = 0
+
+    while idx < len(lines):
+        line = lines[idx].rstrip()
         if not line:
+            idx += 1
+            continue
+
+        # Markdown table:
+        # | Header | Header |
+        # | ------ | ------ |
+        # | cell   | cell   |
+        if (
+            idx + 1 < len(lines)
+            and _is_table_row(line)
+            and _is_table_divider(lines[idx + 1].strip())
+        ):
+            header = _parse_table_row(line)
+            rows = []
+            idx += 2
+            while idx < len(lines):
+                row_line = lines[idx].rstrip()
+                if not _is_table_row(row_line):
+                    break
+                rows.append(_parse_table_row(row_line))
+                idx += 1
+            if header:
+                elements.append({"type": "table", "headers": header, "rows": rows})
             continue
 
         # Bullet point (- item or * item)
@@ -123,8 +148,28 @@ def _parse_body(lines):
                     "runs": parse_inline(line),
                 }
             )
+        idx += 1
 
     return elements
+
+
+def _is_table_row(line):
+    """Return True when *line* looks like a markdown table row."""
+    stripped = line.strip()
+    return stripped.startswith("|") and stripped.endswith("|")
+
+
+def _is_table_divider(line):
+    """Return True when *line* is a markdown table divider row."""
+    if not _is_table_row(line):
+        return False
+    cells = _parse_table_row(line)
+    return bool(cells) and all(re.match(r"^:?-{3,}:?$", cell) for cell in cells)
+
+
+def _parse_table_row(line):
+    """Split a markdown table row into stripped cell values."""
+    return [cell.strip() for cell in line.strip().strip("|").split("|")]
 
 
 def parse_markdown_doc(content):

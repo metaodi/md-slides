@@ -135,6 +135,24 @@ def test_content_slide_body_contains_bullets():
         os.unlink(out)
 
 
+def test_content_slide_table():
+    out = _make_pptx(
+        "## Monthly Savings\n| Month | Savings |\n| ----- | ------- |\n| January | $250 |\n| February | $80 |"
+    )
+    try:
+        prs = Presentation(out)
+        slide = prs.slides[0]
+        tables = [shape.table for shape in slide.shapes if shape.has_table]
+        assert len(tables) == 1
+        table = tables[0]
+        assert table.cell(0, 0).text == "Month"
+        assert table.cell(0, 1).text == "Savings"
+        assert table.cell(1, 0).text == "January"
+        assert table.cell(1, 1).text == "$250"
+    finally:
+        os.unlink(out)
+
+
 def test_bold_text_in_bullet():
     out = _make_pptx("## Slide\n- **bold item**")
     try:

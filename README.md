@@ -20,6 +20,7 @@ your_doc.md  +  template.docx  →  md-docs  →  output.docx
   - **Title slides** (single `# Heading` with optional subtitle)
   - **Content slides** (`## Heading` + body text / bullet points)
   - **Bullet points** (`- item` or `* item`)
+  - **Markdown tables** (`| Header | Value |`)
   - **Bold** (`**text**`) and *italic* (`*text*`) inline formatting
 - Bundled default template — clean, professional look out of the box
 - Swap in your own branded `.pptx` template with `--template`
@@ -28,7 +29,8 @@ your_doc.md  +  template.docx  →  md-docs  →  output.docx
     footers
   - Maps `#`–`######` headings to Word Heading 1–6 styles
   - `---` inserts a page break instead of separating slides
-  - Supports bullet lists (including nested) and bold/italic formatting
+  - Supports bullet lists (including nested), markdown tables, and bold/italic
+    formatting
 
 ---
 
@@ -109,7 +111,8 @@ md-docs doc.md -o output.docx --template corporate_template.docx
 
 Unlike `md-slides`, there is no slide concept.  `---` inserts a **page break**
 instead of separating slides, and headings at any level (`#` through `######`)
-map to the corresponding Word heading style.
+map to the corresponding Word heading style. Markdown tables are converted to
+Word tables.
 
 ```markdown
 # Document Title
@@ -136,6 +139,7 @@ Another paragraph here.
 | `### Heading` | Heading 3 |
 | `- item` or `* item` | List Bullet |
 | `    - item` | List Bullet 2 |
+| `| Col A | Col B |` | Table Grid |
 | Plain text | Normal |
 | `---` | Page break |
 

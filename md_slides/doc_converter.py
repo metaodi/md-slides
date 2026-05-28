@@ -63,6 +63,8 @@ def convert_doc(elements, output_path, template_path=None):
         elem_type = elem.get("type")
         if elem_type == "heading":
             _add_heading(doc, elem)
+        elif elem_type == "table":
+            _add_table(doc, elem)
         elif elem_type == "bullet":
             _add_bullet(doc, elem)
         elif elem_type == "paragraph":
@@ -94,6 +96,26 @@ def _add_bullet(doc, elem):
     style = _BULLET_STYLE if level <= 1 else _BULLET_STYLE_2
     para = doc.add_paragraph(style=style)
     _apply_runs(para, elem.get("runs", []))
+
+
+def _add_table(doc, elem):
+    """Add a Word table."""
+    headers = elem.get("headers", [])
+    rows = elem.get("rows", [])
+    if not headers:
+        return
+
+    table = doc.add_table(rows=1, cols=len(headers))
+    table.style = "Table Grid"
+
+    for idx, header in enumerate(headers):
+        table.rows[0].cells[idx].text = header
+
+    for row in rows:
+        cells = table.add_row().cells
+        for idx, value in enumerate(row):
+            if idx < len(cells):
+                cells[idx].text = value
 
 
 def _add_paragraph(doc, elem):
