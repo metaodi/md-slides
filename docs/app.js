@@ -19,6 +19,8 @@
   const templatePicker = document.getElementById("template-picker");
   const markdownEditor = document.getElementById("markdown-editor");
   const outputFilename = document.getElementById("output-filename");
+  const outputExtension = document.getElementById("output-extension");
+  const formatOptions = document.querySelectorAll(".format-option");
   const generateBtn = document.getElementById("generate-btn");
   const statusSection = document.getElementById("status-section");
   const statusIcon = document.getElementById("status-icon");
@@ -28,6 +30,8 @@
   const runLink = document.getElementById("run-link");
 
   let selectedTemplate = null;
+  let selectedFormat = "pptx";
+  let allTemplates = [];
   let pollTimer = null;
 
   // ── Token persistence (sessionStorage) ────────────────────────
@@ -53,6 +57,26 @@
 
   saveTokenBtn.addEventListener("click", saveToken);
   loadToken();
+
+  // ── Format selection ──────────────────────────────────────────
+  formatOptions.forEach(function (option) {
+    option.addEventListener("click", function () {
+      formatOptions.forEach(function (o) {
+        o.classList.remove("selected");
+      });
+      option.classList.add("selected");
+      selectedFormat = option.dataset.format;
+      outputExtension.textContent = "." + selectedFormat;
+      // Update default filename based on format
+      if (outputFilename.value === "slides" && selectedFormat === "docx") {
+        outputFilename.value = "document";
+      } else if (outputFilename.value === "document" && selectedFormat === "pptx") {
+        outputFilename.value = "slides";
+      }
+      // Re-render templates filtered by format
+      renderTemplates(allTemplates);
+    });
+  });
 
   // ── GitHub API helpers ────────────────────────────────────────
   function apiHeaders() {
@@ -98,8 +122,18 @@
   }
 
   function renderTemplates(templates) {
+    allTemplates = templates;
     templatePicker.innerHTML = "";
-    templates.forEach(function (tpl, idx) {
+    var filtered = templates.filter(function (tpl) {
+      return !tpl.format || tpl.format === selectedFormat;
+    });
+    if (filtered.length === 0) {
+      templatePicker.innerHTML =
+        '<p class="help-text">No templates available for this format.</p>';
+      selectedTemplate = null;
+      return;
+    }
+    filtered.forEach(function (tpl, idx) {
       var card = document.createElement("div");
       card.className = "template-card" + (idx === 0 ? " selected" : "");
       card.dataset.file = tpl.file;
@@ -179,7 +213,8 @@
           inputs: {
             markdown_content: encoded,
             template_name: selectedTemplate,
-            output_filename: outputFilename.value.trim() || "slides",
+            output_filename: outputFilename.value.trim() || (selectedFormat === "docx" ? "document" : "slides"),
+            output_format: selectedFormat,
           },
         }),
       });
@@ -309,7 +344,7 @@
 
       downloadLink.href = url;
       downloadLink.download =
-        (outputFilename.value.trim() || "slides") + ".zip";
+        (outputFilename.value.trim() || (selectedFormat === "docx" ? "document" : "slides")) + ".zip";
       downloadLink.classList.remove("hidden");
       statusActions.classList.remove("hidden");
     } catch (err) {

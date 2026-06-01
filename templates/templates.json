@@ -2,11 +2,19 @@
   {
     "name": "Default",
     "description": "Clean, professional default template bundled with md-slides.",
-    "file": "default.pptx"
+    "file": "default.pptx",
+    "format": "pptx"
   },
   {
     "name": "EBP",
     "description": "EBP-style slide template.",
-    "file": "ebp_template.pptx"
+    "file": "ebp_template.pptx",
+    "format": "pptx"
+  },
+  {
+    "name": "Default Document",
+    "description": "Clean, professional Word document template.",
+    "file": "template.docx",
+    "format": "docx"
   }
 ]

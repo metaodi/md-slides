@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>md-slides — Markdown to PowerPoint</title>
+  <title>md-slides — Markdown to PowerPoint &amp; Word</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <header>
     <h1>md-slides</h1>
-    <p class="subtitle">Convert Markdown into PowerPoint presentations</p>
+    <p class="subtitle">Convert Markdown into PowerPoint presentations or Word documents</p>
   </header>
 
   <main>
@@ -52,6 +52,21 @@
       </details>
     </section>
 
+    <!-- Output format -->
+    <section class="format-section">
+      <h2>Output Format</h2>
+      <div class="format-picker">
+        <label class="format-option selected" data-format="pptx">
+          <input type="radio" name="output-format" value="pptx" checked>
+          <span class="format-label">PowerPoint (.pptx)</span>
+        </label>
+        <label class="format-option" data-format="docx">
+          <input type="radio" name="output-format" value="docx">
+          <span class="format-label">Word (.docx)</span>
+        </label>
+      </div>
+    </section>
+
     <!-- Template selection -->
     <section class="template-section">
       <h2>Template</h2>
@@ -91,9 +106,9 @@ Some paragraph text here."></textarea>
       <div class="output-group">
         <label for="output-filename">Filename</label>
         <input type="text" id="output-filename" value="slides" placeholder="slides">
-        <span class="extension">.pptx</span>
+        <span class="extension" id="output-extension">.pptx</span>
       </div>
-      <button id="generate-btn" type="button">Generate Slides</button>
+      <button id="generate-btn" type="button">Generate</button>
     </section>
 
     <!-- Status -->
@@ -105,7 +120,7 @@ Some paragraph text here."></textarea>
           <span id="status-text">Waiting…</span>
         </div>
         <div id="status-actions" class="hidden">
-          <a id="download-link" class="download-btn hidden" href="#" download>Download Presentation</a>
+          <a id="download-link" class="download-btn hidden" href="#" download>Download</a>
           <a id="run-link" class="run-link hidden" href="#" target="_blank" rel="noopener">View workflow run</a>
         </div>
       </div>

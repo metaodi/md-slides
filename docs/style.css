@@ -158,6 +158,47 @@ button {
   flex: 1;
 }
 
+/* ── Format picker ─────────────────────────────────────────────── */
+.format-section {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 1rem;
+}
+
+.format-picker {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.format-option {
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.format-option input[type="radio"] {
+  accent-color: var(--color-primary);
+}
+
+.format-option:hover {
+  border-color: var(--color-primary);
+}
+
+.format-option.selected {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.25);
+}
+
 /* ── Template picker ───────────────────────────────────────────── */
 .template-section {
   background: var(--color-surface);

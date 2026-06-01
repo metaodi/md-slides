@@ -17,6 +17,11 @@ on:
         required: false
         type: string
         default: "slides"
+      output_format:
+        description: "Output format: pptx or docx"
+        required: false
+        type: string
+        default: "pptx"
 
 jobs:
   build:
@@ -49,7 +54,7 @@ jobs:
             exit 1
           fi
 
-      - name: Decode markdown and build presentation
+      - name: Decode markdown and build output
         run: |
           echo "${{ inputs.markdown_content }}" | base64 --decode > input.md
 
@@ -58,11 +63,18 @@ jobs:
             OUTPUT_NAME="slides"
           fi
 
-          uv run md-slides input.md \
-            -o "${OUTPUT_NAME}.pptx" \
-            --template "templates/${{ inputs.template_name }}"
-
-          echo "output_file=${OUTPUT_NAME}.pptx" >> "$GITHUB_ENV"
+          FORMAT="${{ inputs.output_format }}"
+          if [ "$FORMAT" = "docx" ]; then
+            uv run md-docs input.md \
+              -o "${OUTPUT_NAME}.docx" \
+              --template "templates/${{ inputs.template_name }}"
+            echo "output_file=${OUTPUT_NAME}.docx" >> "$GITHUB_ENV"
+          else
+            uv run md-slides input.md \
+              -o "${OUTPUT_NAME}.pptx" \
+              --template "templates/${{ inputs.template_name }}"
+            echo "output_file=${OUTPUT_NAME}.pptx" >> "$GITHUB_ENV"
+          fi
 
       - name: Upload presentation artifact
         uses: actions/upload-artifact@v4
